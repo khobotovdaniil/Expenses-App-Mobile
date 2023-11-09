@@ -22,6 +22,12 @@ web-build/
 *.key
 *.mobileprovision
 
+#linters
+.vscode/
+.eslintrc.json
+.prettierrc.json
+.prettierignore
+
 # Metro
 .metro-health-check*
 
