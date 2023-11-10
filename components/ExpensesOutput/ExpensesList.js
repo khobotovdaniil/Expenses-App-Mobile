@@ -10,6 +10,7 @@ const renderExpenseItem = itemData => {
 export default function ExpensesList({ expenses }) {
   return (
     <FlatList
+      style={styles.list}
       data={expenses}
       keyExtractor={item => item.id}
       renderItem={renderExpenseItem}
@@ -17,4 +18,8 @@ export default function ExpensesList({ expenses }) {
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  list: {
+    paddingRight: 5,
+  },
+})
