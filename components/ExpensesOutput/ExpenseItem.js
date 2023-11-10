@@ -15,29 +15,36 @@ export default function ExpenseItem({ descr, amount, date, id }) {
   }
 
   return (
-    <Pressable
-      onPress={expensePressHandler}
-      style={({ pressed }) => pressed && styles.pressed}>
-      <View style={styles.expenseItem}>
-        <View>
-          <Text style={[styles.textBase, styles.description]}>{descr}</Text>
-          <Text style={styles.textBase}>{getFormattedDate(date)}</Text>
+    <View style={styles.container}>
+      <Pressable
+        onPress={expensePressHandler}
+        style={({ pressed }) => pressed && styles.pressed}
+        android_ripple={{ color: GlobalStyles.colors.gray500 }}>
+        <View style={styles.expenseItem}>
+          <View>
+            <Text style={[styles.textBase, styles.description]}>{descr}</Text>
+            <Text style={styles.textBase}>{getFormattedDate(date)}</Text>
+          </View>
+          <View style={styles.amountContainer}>
+            <Text style={styles.amount}>{amount.toFixed(2)}</Text>
+          </View>
         </View>
-        <View style={styles.amountContainer}>
-          <Text style={styles.amount}>{amount.toFixed(2)}</Text>
-        </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    marginVertical: 8,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
   pressed: {
     opacity: 0.75,
   },
   expenseItem: {
     padding: 12,
-    marginVertical: 8,
     backgroundColor: GlobalStyles.colors.primary500,
     flexDirection: 'row',
     justifyContent: 'space-between',
