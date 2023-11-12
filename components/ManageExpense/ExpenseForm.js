@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Text, Alert } from 'react-native'
+import { View, StyleSheet, Text } from 'react-native'
 
 import Button from '../../UI/Button'
 import Input from './Input'
 import { getFormattedDate } from '../../util/date'
+import { GlobalStyles } from '../../constants/styles'
 
 export default function ExpenseForm({
   submitButtonLabel,
@@ -11,42 +12,64 @@ export default function ExpenseForm({
   onSubmit,
   defaultValues,
 }) {
-  const [inputValues, setInputValues] = useState({
-    amount: defaultValues ? defaultValues.amount.toString() : '',
-    date: defaultValues ? getFormattedDate(defaultValues.date) : '',
-    descr: defaultValues ? defaultValues.descr : '',
+  const [inputs, setInputs] = useState({
+    amount: {
+      value: defaultValues ? defaultValues.amount.toString() : '',
+      isValid: true,
+    },
+    date: {
+      value: defaultValues ? getFormattedDate(defaultValues.date) : '',
+      isValid: true,
+    },
+    descr: {
+      value: defaultValues ? defaultValues.descr : '',
+      isValid: true,
+    },
   })
 
   const inputChangedHandler = (inputIdentifier, enteredValue) => {
-    setInputValues(currentInputValues => {
+    setInputs(currentInputs => {
       return {
-        ...currentInputValues,
-        [inputIdentifier]: enteredValue,
+        ...currentInputs,
+        [inputIdentifier]: { value: enteredValue, isValid: true },
       }
     })
   }
 
-  const submitHandler = () => {
-    let [day, month, year] = inputValues.date.split('-')
+  function submitHandler() {
+    let [day, month, year] = inputs.date.value.split('-')
 
     const expenseData = {
-      amount: +inputValues.amount,
+      amount: +inputs.amount.value,
       date: new Date(+year, +month - 1, +day),
-      descr: inputValues.descr,
+      descr: inputs.descr.value,
     }
 
     const amountIsValid = !isNaN(expenseData.amount) && expenseData.amount !== 0
-    const dateIsValid =
-      new Date(+year, +month - 1, +day).toString() !== 'Invalid Date'
+    const dateIsValid = expenseData.date.toString() !== 'Invalid Date'
     const descrIsValid = expenseData.descr.trim().length > 0
 
     if (!amountIsValid || !dateIsValid || !descrIsValid) {
-      Alert.alert('Invalid input', 'Please check your input values')
+      setInputs(currentInputs => {
+        return {
+          amount: { value: currentInputs.amount.value, isValid: amountIsValid },
+          date: { value: currentInputs.date.value, isValid: dateIsValid },
+          descr: { value: currentInputs.descr.value, isValid: descrIsValid },
+        }
+      })
       return
     }
 
     onSubmit(expenseData)
   }
+
+  const errorText = (!inputs.amount.isValid ||
+    !inputs.date.isValid ||
+    !inputs.descr.isValid) && (
+    <Text style={styles.errorText}>
+      Invalid input values - please check your endered data!
+    </Text>
+  )
 
   return (
     <View style={styles.form}>
@@ -55,33 +78,37 @@ export default function ExpenseForm({
         <Input
           style={styles.rowInput}
           label="Amount"
+          invalid={!inputs.amount.isValid}
           textInputConfig={{
             keyboardType: 'decimal-pad',
             onChangeText: inputChangedHandler.bind(this, 'amount'),
-            value: inputValues.amount,
+            value: inputs.amount.value,
           }}
         />
         <Input
           style={styles.rowInput}
           label="Date"
+          invalid={!inputs.date.isValid}
           textInputConfig={{
             placeholder: 'DD-MM-YYYY',
             maxLength: 10,
             onChangeText: inputChangedHandler.bind(this, 'date'),
-            value: inputValues.date,
+            value: inputs.date.value,
           }}
         />
       </View>
       <Input
         label="Description"
+        invalid={!inputs.descr.isValid}
         textInputConfig={{
           multiline: true,
           autoCorrect: true,
           autoCapitalize: 'sentences',
           onChangeText: inputChangedHandler.bind(this, 'descr'),
-          value: inputValues.descr,
+          value: inputs.descr.value,
         }}
       />
+      {errorText}
       <View style={styles.buttonContainer}>
         <Button
           style={styles.button}
@@ -116,6 +143,12 @@ const styles = StyleSheet.create({
   },
   rowInput: {
     flex: 1,
+  },
+  errorText: {
+    textAlign: 'center',
+    color: GlobalStyles.colors.error500,
+    margin: 8,
+    marginBottom: 16,
   },
   buttonContainer: {
     flexDirection: 'row',
