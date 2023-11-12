@@ -1,14 +1,20 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Text, Alert } from 'react-native'
 
 import Button from '../../UI/Button'
 import Input from './Input'
+import { getFormattedDate } from '../../util/date'
 
-export default function ExpenseForm({ submitButtonLabel, onCancel, onSubmit }) {
+export default function ExpenseForm({
+  submitButtonLabel,
+  onCancel,
+  onSubmit,
+  defaultValues,
+}) {
   const [inputValues, setInputValues] = useState({
-    amount: '',
-    date: '',
-    descr: '',
+    amount: defaultValues ? defaultValues.amount.toString() : '',
+    date: defaultValues ? getFormattedDate(defaultValues.date) : '',
+    descr: defaultValues ? defaultValues.descr : '',
   })
 
   const inputChangedHandler = (inputIdentifier, enteredValue) => {
@@ -21,10 +27,22 @@ export default function ExpenseForm({ submitButtonLabel, onCancel, onSubmit }) {
   }
 
   const submitHandler = () => {
+    let [day, month, year] = inputValues.date.split('-')
+
     const expenseData = {
       amount: +inputValues.amount,
-      date: new Date(inputValues.date),
+      date: new Date(+year, +month - 1, +day),
       descr: inputValues.descr,
+    }
+
+    const amountIsValid = !isNaN(expenseData.amount) && expenseData.amount !== 0
+    const dateIsValid =
+      new Date(+year, +month - 1, +day).toString() !== 'Invalid Date'
+    const descrIsValid = expenseData.descr.trim().length > 0
+
+    if (!amountIsValid || !dateIsValid || !descrIsValid) {
+      Alert.alert('Invalid input', 'Please check your input values')
+      return
     }
 
     onSubmit(expenseData)
@@ -47,7 +65,7 @@ export default function ExpenseForm({ submitButtonLabel, onCancel, onSubmit }) {
           style={styles.rowInput}
           label="Date"
           textInputConfig={{
-            placeholder: 'YYYY-MM-DD',
+            placeholder: 'DD-MM-YYYY',
             maxLength: 10,
             onChangeText: inputChangedHandler.bind(this, 'date'),
             value: inputValues.date,

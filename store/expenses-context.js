@@ -59,12 +59,13 @@ export const ExpensesContext = createContext({
 })
 
 function expensesReducer(state, action) {
+  const newState = [...state]
+  const newItem = true
+
   switch (action.type) {
     case 'ADD':
       const id = new Date().toString() + Math.random().toString()
-      const newItem = true
 
-      let newState = [...state]
       const prevNewExpenseIndex = state.findIndex(expense => expense.newItem)
       if (prevNewExpenseIndex >= 0) {
         newState[prevNewExpenseIndex].newItem =
@@ -80,9 +81,8 @@ function expensesReducer(state, action) {
       )
       const updatableExpense = state[updatableExpenseIndex]
       const updatedItem = { ...updatableExpense, ...action.payload.data }
-      const updatedExpenses = [...state]
-      updatedExpenses[updatableExpenseIndex] = updatedItem
-      return updatedExpenses
+      newState[updatableExpenseIndex] = updatedItem
+      return newState
     default:
       return state
   }
