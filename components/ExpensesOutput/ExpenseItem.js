@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import { GlobalStyles } from '../../constants/styles'
 import { getFormattedDate } from '../../util/date'
 
-export default function ExpenseItem({ descr, amount, date, id }) {
+export default function ExpenseItem({ descr, amount, date, id, newItem }) {
   const navigation = useNavigation()
 
   const expensePressHandler = () => {
@@ -20,7 +20,7 @@ export default function ExpenseItem({ descr, amount, date, id }) {
         onPress={expensePressHandler}
         style={({ pressed }) => pressed && styles.pressed}
         android_ripple={{ color: GlobalStyles.colors.gray500 }}>
-        <View style={styles.expenseItem}>
+        <View style={[styles.expenseItem, newItem && styles.expenseItemNew]}>
           <View>
             <Text style={[styles.textBase, styles.description]}>{descr}</Text>
             <Text style={styles.textBase}>{getFormattedDate(date)}</Text>
@@ -54,6 +54,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
+  },
+  expenseItemNew: {
+    backgroundColor: GlobalStyles.colors.primary200,
   },
   textBase: {
     color: GlobalStyles.colors.primary50,

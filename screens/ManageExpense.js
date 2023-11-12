@@ -4,7 +4,6 @@ import { StyleSheet, View } from 'react-native'
 import ExpenseForm from '../components/ManageExpense/ExpenseForm'
 import IconButton from '../UI/IconButton'
 import { GlobalStyles } from '../constants/styles'
-import Button from '../UI/Button'
 import { ExpensesContext } from '../store/expenses-context'
 
 export default function ManageExpense({ route, navigation }) {
@@ -24,43 +23,26 @@ export default function ManageExpense({ route, navigation }) {
     navigation.goBack()
   }
 
-  const cacelHandler = () => {
+  const cancelHandler = () => {
     navigation.goBack()
   }
 
-  const confirmHandler = () => {
+  const confirmHandler = expenseData => {
     if (isEditing) {
-      expensesCtx.updateExpense(editedExpenseId, {
-        descr: 'test2',
-        amount: 29.44,
-        date: new Date('2022-2-25'),
-      })
+      expensesCtx.updateExpense(editedExpenseId, expenseData)
     } else {
-      expensesCtx.addExpense({
-        descr: 'test',
-        amount: 19.11,
-        date: new Date('2023-11-12'),
-      })
+      expensesCtx.addExpense(expenseData)
     }
     navigation.goBack()
   }
 
   return (
     <View style={styles.container}>
-      <ExpenseForm />
-      <View style={styles.buttonContainer}>
-        <Button
-          style={styles.button}
-          mode="flat"
-          onPress={cacelHandler}>
-          Cancel
-        </Button>
-        <Button
-          style={styles.button}
-          onPress={confirmHandler}>
-          {isEditing ? 'Update' : 'Add'}
-        </Button>
-      </View>
+      <ExpenseForm
+        submitButtonLabel={isEditing ? 'Update' : 'Add'}
+        onCancel={cancelHandler}
+        onSubmit={confirmHandler}
+      />
       {isEditing && (
         <View style={styles.deleteContainer}>
           <IconButton
@@ -87,14 +69,5 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderTopColor: GlobalStyles.colors.primary200,
     alignItems: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    minWidth: 120,
-    marginHorizontal: 8,
   },
 })

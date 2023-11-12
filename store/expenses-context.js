@@ -29,7 +29,7 @@ const DUMMY_EXPENSES = [
     id: 'e5',
     descr: 'Another Book',
     amount: 87.53,
-    date: new Date('2023-11-09'),
+    date: new Date('2023-11-12'),
   },
   {
     id: 'e6',
@@ -53,7 +53,7 @@ const DUMMY_EXPENSES = [
 
 export const ExpensesContext = createContext({
   expenses: [],
-  addExpense: ({ descr, amount, date }) => {},
+  addExpense: ({ descr, amount, date, newItem }) => {},
   deleteExpense: id => {},
   updateExpense: (id, { descr, amount, date }) => {},
 })
@@ -62,7 +62,16 @@ function expensesReducer(state, action) {
   switch (action.type) {
     case 'ADD':
       const id = new Date().toString() + Math.random().toString()
-      return [{ ...action.payload, id }, ...state]
+      const newItem = true
+
+      let newState = [...state]
+      const prevNewExpenseIndex = state.findIndex(expense => expense.newItem)
+      if (prevNewExpenseIndex >= 0) {
+        newState[prevNewExpenseIndex].newItem =
+          newState[prevNewExpenseIndex].newItem && false
+      }
+
+      return [{ ...action.payload, id, newItem }, ...newState]
     case 'DELETE':
       return state.filter(expense => expense.id !== action.payload)
     case 'UPDATE':
