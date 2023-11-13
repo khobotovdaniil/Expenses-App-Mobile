@@ -37,7 +37,10 @@ export default function ExpenseForm({
   }
 
   function submitHandler() {
-    let [day, month, year] = inputs.date.value.split('-')
+    let [day, month, year] = inputs.date.value.split(/[-,.,/,\, ]/)
+    if (year.length < 3) {
+      year = `20${year}`
+    }
 
     const expenseData = {
       amount: +inputs.amount.value,
@@ -91,6 +94,7 @@ export default function ExpenseForm({
           invalid={!inputs.date.isValid}
           textInputConfig={{
             placeholder: 'DD-MM-YYYY',
+            keyboardType: 'decimal-pad',
             maxLength: 10,
             onChangeText: inputChangedHandler.bind(this, 'date'),
             value: inputs.date.value,

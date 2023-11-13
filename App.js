@@ -10,11 +10,36 @@ import ExpensesContextProvider from './store/expenses-context'
 import ManageExpense from './screens/ManageExpense'
 import RecentExpenses from './screens/RecentExpenses'
 import AllExpenses from './screens/AllExpenses'
+import ChangeDatesRange from './screens/ChangeDatesRange'
 import { GlobalStyles } from './constants/styles'
 import IconButton from './UI/IconButton'
 
 const Stack = createNativeStackNavigator()
 const BottomTabs = createBottomTabNavigator()
+const Recent = createNativeStackNavigator()
+
+function RecentStack() {
+  return (
+    <Recent.Navigator screenOptions={{}}>
+      <Recent.Screen
+        name="RecentExpenses"
+        component={RecentExpenses}
+        options={{ headerShown: false }}
+      />
+      <Recent.Screen
+        name="ChangeDatesRange"
+        component={ChangeDatesRange}
+        options={{
+          presentation: 'modal',
+          title: 'Change Range of Dates',
+          headerStyle: {
+            backgroundColor: GlobalStyles.colors.primary200,
+          },
+        }}
+      />
+    </Recent.Navigator>
+  )
+}
 
 function ExpensesOverview() {
   return (
@@ -40,9 +65,9 @@ function ExpensesOverview() {
         ),
       })}>
       <BottomTabs.Screen
-        name="RecentExpenses"
-        component={RecentExpenses}
-        options={{
+        name="RecentStack"
+        component={RecentStack}
+        options={({ navigation }) => ({
           title: 'Recent Expenses',
           tabBarLabel: 'Recent',
           tabBarIcon: ({ color, size }) => (
@@ -52,7 +77,17 @@ function ExpensesOverview() {
               color={color}
             />
           ),
-        }}
+          headerLeft: () => (
+            <IconButton
+              icon="calendar-sharp"
+              size={24}
+              color="white"
+              onPress={() => {
+                navigation.navigate('ChangeDatesRange')
+              }}
+            />
+          ),
+        })}
       />
       <BottomTabs.Screen
         name="AllExpenses"
