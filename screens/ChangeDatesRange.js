@@ -1,30 +1,31 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import { GlobalStyles } from '../constants/styles'
-import Button from '../UI/Button'
 import DatesForm from '../components/ChangeDatesRange/DatesForm'
+import { DatesContext } from '../store/dates-context'
 
 export default function ChangeDatesRange({ navigation }) {
+  const datesCtx = useContext(DatesContext)
+
+  const confirmHandler = formData => {
+    datesCtx.changeDates(formData)
+    navigation.goBack()
+  }
+
+  const cancelHandler = () => {
+    navigation.goBack()
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
         Select the date range for which you want to view your expenses
       </Text>
-      <DatesForm />
-      <View style={styles.buttons}>
-        <Button
-          style={styles.button}
-          mode="flat"
-          onPress={() => navigation.goBack()}>
-          Back
-        </Button>
-        <Button
-          style={styles.button}
-          onPress={() => {}}>
-          Confirm
-        </Button>
-      </View>
+      <DatesForm
+        onSubmit={confirmHandler}
+        onCancel={cancelHandler}
+      />
     </View>
   )
 }
@@ -40,15 +41,5 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 22,
     textAlign: 'center',
-  },
-  buttons: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 24,
-  },
-  button: {
-    width: '30%',
-    marginHorizontal: 20,
   },
 })

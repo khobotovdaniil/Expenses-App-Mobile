@@ -38,13 +38,13 @@ export default function ExpenseForm({
 
   function submitHandler() {
     let [day, month, year] = inputs.date.value.split(/[-,.,/,\, ]/)
-    if (year.length < 3) {
-      year = `20${year}`
+    const fullYear = year => {
+      return year && year.length < 3 ? +`20${year}` : +year
     }
 
     const expenseData = {
       amount: +inputs.amount.value,
-      date: new Date(+year, +month - 1, +day),
+      date: new Date(fullYear(year), +month - 1, +day),
       descr: inputs.descr.value,
     }
 
