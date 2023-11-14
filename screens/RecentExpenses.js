@@ -1,13 +1,11 @@
 import React, { useContext } from 'react'
+import { View, Text } from 'react-native'
 
 import ExpensesOutput from '../components/ExpensesOutput/ExpensesOutput'
+import DatesRangeInfoText from '../components/ExpensesOutput/DatesRangeInfoText'
 import { ExpensesContext } from '../store/expenses-context'
 import { DatesContext } from '../store/dates-context'
-import {
-  getDateMinusDays,
-  getFormattedDate,
-  getNumberOfDays,
-} from '../util/date'
+import { getFormattedDate, getNumberOfDays } from '../util/date'
 
 export default function RecentExpenses() {
   const expensesCtx = useContext(ExpensesContext)
@@ -19,19 +17,27 @@ export default function RecentExpenses() {
   const days = getNumberOfDays(from, until)
 
   const filteredExpenses = expensesCtx.expenses.filter(expense => {
-    const today = new Date()
-    const date7DaysAgo = getDateMinusDays(today, 7)
-
-    return expense.date > date7DaysAgo && expense.date <= today
+    return expense.date >= from && expense.date <= until
   })
 
+  const datesText =
+    filteredExpenses.length > 0 ? (
+      <DatesRangeInfoText
+        from={getFormattedDate(from)}
+        to={getFormattedDate(until)}
+      />
+    ) : null
+
   return (
-    <ExpensesOutput
-      expenses={filteredExpenses}
-      fallbackText="There have been no expenses"
-      expensesPeriod={`Period of ${days} days`}
-      from={getFormattedDate(from)}
-      to={getFormattedDate(until)}
-    />
+    <>
+      {datesText}
+      <ExpensesOutput
+        expenses={filteredExpenses}
+        fallbackText="There have been no expenses"
+        expensesPeriod={`Period of ${days} days`}
+        from={getFormattedDate(from)}
+        to={getFormattedDate(until)}
+      />
+    </>
   )
 }
