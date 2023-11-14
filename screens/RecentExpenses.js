@@ -13,12 +13,12 @@ export default function RecentExpenses() {
   const expensesCtx = useContext(ExpensesContext)
   const datesCtx = useContext(DatesContext)
 
-  const from = new Date(datesCtx.dates[0].from)
-  const until = new Date(datesCtx.dates[0].until)
+  const from = new Date(datesCtx.dates.from)
+  const until = new Date(datesCtx.dates.until)
 
   const days = getNumberOfDays(from, until)
 
-  const recentExpenses = expensesCtx.expenses.filter(expense => {
+  const filteredExpenses = expensesCtx.expenses.filter(expense => {
     const today = new Date()
     const date7DaysAgo = getDateMinusDays(today, 7)
 
@@ -27,7 +27,7 @@ export default function RecentExpenses() {
 
   return (
     <ExpensesOutput
-      expenses={recentExpenses}
+      expenses={filteredExpenses}
       fallbackText="There have been no expenses"
       expensesPeriod={`Period of ${days} days`}
       from={getFormattedDate(from)}

@@ -1,22 +1,18 @@
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-// import DateTimePicker from '@react-native-community/datetimepicker';
 
 import Button from '../../UI/Button'
 import Input from '../ManageExpense/Input'
 import { GlobalStyles } from '../../constants/styles'
-import { getFormattedDate, getDateMinusDays } from '../../util/date'
 
-export default function DatesForm({ onCancel, onSubmit }) {
-  const today = new Date()
-
+export default function DatesForm({ onCancel, onSubmit, from, to }) {
   const [dates, setDates] = useState({
     from: {
-      value: getFormattedDate(getDateMinusDays(today, 7)),
+      value: from,
       isValid: true,
     },
     until: {
-      value: getFormattedDate(today),
+      value: to,
       isValid: true,
     },
   })
@@ -66,19 +62,6 @@ export default function DatesForm({ onCancel, onSubmit }) {
       }
     })
   }
-
-  // const showDatepicker = () => {
-  //   showMode('date');
-  // };
-
-  // const showMode = (currentMode) => {
-  //   DateTimePickerAndroid.open({
-  //     value: date,
-  //     onChange,
-  //     mode: currentMode,
-  //     is24Hour: true,
-  //   });
-  // };
 
   return (
     <>

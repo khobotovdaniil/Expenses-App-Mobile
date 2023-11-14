@@ -4,9 +4,13 @@ import { StyleSheet, Text, View } from 'react-native'
 import { GlobalStyles } from '../constants/styles'
 import DatesForm from '../components/ChangeDatesRange/DatesForm'
 import { DatesContext } from '../store/dates-context'
+import { getFormattedDate } from '../util/date'
 
 export default function ChangeDatesRange({ navigation }) {
   const datesCtx = useContext(DatesContext)
+
+  const from = getFormattedDate(datesCtx.dates.from)
+  const to = getFormattedDate(datesCtx.dates.until)
 
   const confirmHandler = formData => {
     datesCtx.changeDates(formData)
@@ -25,6 +29,8 @@ export default function ChangeDatesRange({ navigation }) {
       <DatesForm
         onSubmit={confirmHandler}
         onCancel={cancelHandler}
+        from={from}
+        to={to}
       />
     </View>
   )
