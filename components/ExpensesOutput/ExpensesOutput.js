@@ -9,8 +9,23 @@ export default function ExpensesOutput({
   expenses,
   expensesPeriod,
   fallbackText,
+  from,
+  to,
 }) {
-  let content = <Text style={styles.infoText}>{fallbackText}</Text>
+  const text =
+    from && to ? (
+      <>
+        <Text style={styles.infoText}>{fallbackText}</Text>
+        <Text style={styles.infoText}>
+          from <Text style={styles.accentText}>{from}</Text> to{' '}
+          <Text style={styles.accentText}>{to}</Text>
+        </Text>
+      </>
+    ) : (
+      <Text style={styles.infoText}>{fallbackText}</Text>
+    )
+
+  let content = <View style={styles.textContainer}>{text}</View>
 
   if (expenses.length > 0) {
     content = <ExpensesList expenses={expenses} />
@@ -35,10 +50,17 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     backgroundColor: GlobalStyles.colors.primary700,
   },
+  textContainer: {
+    marginTop: 40,
+  },
   infoText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
-    marginTop: 32,
+    marginTop: 10,
+  },
+  accentText: {
+    color: GlobalStyles.colors.accent500,
+    fontSize: 20,
   },
 })

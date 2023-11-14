@@ -2,10 +2,21 @@ import React, { useContext } from 'react'
 
 import ExpensesOutput from '../components/ExpensesOutput/ExpensesOutput'
 import { ExpensesContext } from '../store/expenses-context'
-import { getDateMinusDays } from '../util/date'
+import { DatesContext } from '../store/dates-context'
+import {
+  getDateMinusDays,
+  getFormattedDate,
+  getNumberOfDays,
+} from '../util/date'
 
 export default function RecentExpenses() {
   const expensesCtx = useContext(ExpensesContext)
+  const datesCtx = useContext(DatesContext)
+
+  const from = new Date(datesCtx.dates[0].from)
+  const until = new Date(datesCtx.dates[0].until)
+
+  const days = getNumberOfDays(from, until)
 
   const recentExpenses = expensesCtx.expenses.filter(expense => {
     const today = new Date()
@@ -17,8 +28,10 @@ export default function RecentExpenses() {
   return (
     <ExpensesOutput
       expenses={recentExpenses}
-      expensesPeriod="Last 7 Days"
-      fallbackText={'There have been no expenses in the last 7 days'}
+      fallbackText="There have been no expenses"
+      expensesPeriod={`Period of ${days} days`}
+      from={getFormattedDate(from)}
+      to={getFormattedDate(until)}
     />
   )
 }

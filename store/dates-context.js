@@ -1,10 +1,19 @@
 import React, { createContext, useReducer } from 'react'
+import { getDateMinusDays } from '../util/date'
 
-const DATA = []
+const today = new Date()
+const date7DaysAgo = getDateMinusDays(today, 6)
+
+const DATA = [
+  {
+    from: date7DaysAgo,
+    until: today,
+  },
+]
 
 export const DatesContext = createContext({
   dates: [],
-  changeDates: data => {},
+  changeDates: ({ from, until }) => {},
 })
 
 function datesReducer(state, action) {
