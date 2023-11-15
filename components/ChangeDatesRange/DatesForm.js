@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 
 import Button from '../../UI/Button'
 import Input from '../ManageExpense/Input'
 import { GlobalStyles } from '../../constants/styles'
+import { createDateFromString, getFormattedDate } from '../../util/date'
 
 export default function DatesForm({ onCancel, onSubmit, from, to }) {
   const [dates, setDates] = useState({
@@ -18,17 +20,9 @@ export default function DatesForm({ onCancel, onSubmit, from, to }) {
   })
 
   const submitHandler = () => {
-    let [fromDay, fromMonth, fromYear] = dates.from.value.split(/[-,.,/,\, ]/)
-    let [untilDay, untilMonth, untilYear] =
-      dates.until.value.split(/[-,.,/,\, ]/)
-
-    const fullYear = year => {
-      return year && year.length < 3 ? +`20${year}` : +year
-    }
-
     const datesRange = {
-      from: new Date(fullYear(fromYear), +fromMonth - 1, +fromDay),
-      until: new Date(fullYear(untilYear), +untilMonth - 1, +untilDay),
+      from: createDateFromString(dates.from),
+      until: createDateFromString(dates.until),
     }
 
     const dateIsValid = item => {
@@ -63,6 +57,19 @@ export default function DatesForm({ onCancel, onSubmit, from, to }) {
     })
   }
 
+  const onPickerChange = (tag, event, selectedDate) => {
+    inputChangedHandler(tag, getFormattedDate(selectedDate))
+  }
+
+  const showDatepicker = (stateName, tag) => {
+    DateTimePickerAndroid.open({
+      value: createDateFromString(stateName),
+      onChange: onPickerChange.bind(this, tag),
+      mode: 'date',
+      is24Hour: true,
+    })
+  }
+
   return (
     <>
       <View style={styles.container}>
@@ -81,7 +88,7 @@ export default function DatesForm({ onCancel, onSubmit, from, to }) {
           />
           <Button
             style={styles.button}
-            onPress={() => {}}>
+            onPress={showDatepicker.bind(this, dates.from, 'from')}>
             Pick Date
           </Button>
         </View>
@@ -100,7 +107,7 @@ export default function DatesForm({ onCancel, onSubmit, from, to }) {
           />
           <Button
             style={styles.button}
-            onPress={() => {}}>
+            onPress={showDatepicker.bind(this, dates.until, 'until')}>
             Pick Date
           </Button>
         </View>
@@ -137,11 +144,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
-    width: '40%',
+    width: 160,
   },
   button: {
     marginTop: 20,
-    width: '30%',
+    width: 100,
   },
   formButtons: {
     width: '100%',

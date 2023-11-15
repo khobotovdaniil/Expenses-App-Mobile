@@ -25,13 +25,14 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     backgroundColor: GlobalStyles.colors.primary700,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
   },
   textContainer: {
     paddingVertical: 6,
     paddingHorizontal: 14,
     borderRadius: 6,
     backgroundColor: GlobalStyles.colors.primary400,
+    marginHorizontal: 20,
   },
   text: {
     color: 'white',

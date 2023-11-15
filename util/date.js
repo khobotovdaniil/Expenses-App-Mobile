@@ -25,3 +25,13 @@ export function getNumberOfDays(start, end) {
 
   return diffInDays
 }
+
+export function createDateFromString(item) {
+  let [day, month, year] = item.value.split(/[-,.,/,\, ]/)
+
+  const fullYear = year => {
+    return year && year.length < 3 ? +`20${year}` : +year
+  }
+
+  return new Date(fullYear(year), +month - 1, +day)
+}
