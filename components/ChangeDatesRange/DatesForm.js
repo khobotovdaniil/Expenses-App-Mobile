@@ -62,13 +62,6 @@ export default function DatesForm({ onCancel, onSubmit, from, to }) {
   }
 
   const showDatepicker = (stateName, tag) => {
-    // const checkValue = createDateFromString(stateName)
-    // const today = new Date()
-    // if (!checkValue ) {
-    //   inputChangedHandler(tag, today)
-    //   checkValue = today
-    // }
-
     DateTimePickerAndroid.open({
       value: dateIsValid(createDateFromString(stateName))
         ? createDateFromString(stateName)
