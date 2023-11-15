@@ -35,3 +35,7 @@ export function createDateFromString(item) {
 
   return new Date(fullYear(year), +month - 1, +day)
 }
+
+export function dateIsValid(item) {
+  return item.toString() !== 'Invalid Date'
+}

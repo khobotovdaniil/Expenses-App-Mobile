@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { SafeAreaView, StyleSheet, View } from 'react-native'
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 
 import Button from '../../UI/Button'
 import Input from '../ManageExpense/Input'
 import { GlobalStyles } from '../../constants/styles'
-import { createDateFromString, getFormattedDate } from '../../util/date'
+import {
+  createDateFromString,
+  getFormattedDate,
+  dateIsValid,
+} from '../../util/date'
 
 export default function DatesForm({ onCancel, onSubmit, from, to }) {
   const [dates, setDates] = useState({
@@ -23,10 +27,6 @@ export default function DatesForm({ onCancel, onSubmit, from, to }) {
     const datesRange = {
       from: createDateFromString(dates.from),
       until: createDateFromString(dates.until),
-    }
-
-    const dateIsValid = item => {
-      return item.toString() !== 'Invalid Date'
     }
 
     if (!dateIsValid(datesRange.from) || !dateIsValid(datesRange.until)) {
@@ -62,8 +62,17 @@ export default function DatesForm({ onCancel, onSubmit, from, to }) {
   }
 
   const showDatepicker = (stateName, tag) => {
+    // const checkValue = createDateFromString(stateName)
+    // const today = new Date()
+    // if (!checkValue ) {
+    //   inputChangedHandler(tag, today)
+    //   checkValue = today
+    // }
+
     DateTimePickerAndroid.open({
-      value: createDateFromString(stateName),
+      value: dateIsValid(createDateFromString(stateName))
+        ? createDateFromString(stateName)
+        : new Date(),
       onChange: onPickerChange.bind(this, tag),
       mode: 'date',
       is24Hour: true,
@@ -73,44 +82,46 @@ export default function DatesForm({ onCancel, onSubmit, from, to }) {
   return (
     <>
       <View style={styles.container}>
-        <View style={styles.rowContainer}>
-          <Input
-            style={styles.input}
-            label="From"
-            invalid={!dates.from.isValid}
-            textInputConfig={{
-              placeholder: 'DD-MM-YYYY',
-              keyboardType: 'decimal-pad',
-              maxLength: 10,
-              onChangeText: inputChangedHandler.bind(this, 'from'),
-              value: dates.from.value,
-            }}
-          />
-          <Button
-            style={styles.button}
-            onPress={showDatepicker.bind(this, dates.from, 'from')}>
-            Pick Date
-          </Button>
-        </View>
-        <View style={styles.rowContainer}>
-          <Input
-            style={styles.input}
-            label="Until"
-            invalid={!dates.until.isValid}
-            textInputConfig={{
-              placeholder: 'DD-MM-YYYY',
-              keyboardType: 'decimal-pad',
-              maxLength: 10,
-              onChangeText: inputChangedHandler.bind(this, 'until'),
-              value: dates.until.value,
-            }}
-          />
-          <Button
-            style={styles.button}
-            onPress={showDatepicker.bind(this, dates.until, 'until')}>
-            Pick Date
-          </Button>
-        </View>
+        <SafeAreaView>
+          <View style={styles.rowContainer}>
+            <Input
+              style={styles.input}
+              label="From"
+              invalid={!dates.from.isValid}
+              textInputConfig={{
+                placeholder: 'DD-MM-YYYY',
+                keyboardType: 'decimal-pad',
+                maxLength: 10,
+                onChangeText: inputChangedHandler.bind(this, 'from'),
+                value: dates.from.value,
+              }}
+            />
+            <Button
+              style={styles.button}
+              onPress={showDatepicker.bind(this, dates.from, 'from')}>
+              Pick Date
+            </Button>
+          </View>
+          <View style={styles.rowContainer}>
+            <Input
+              style={styles.input}
+              label="Until"
+              invalid={!dates.until.isValid}
+              textInputConfig={{
+                placeholder: 'DD-MM-YYYY',
+                keyboardType: 'decimal-pad',
+                maxLength: 10,
+                onChangeText: inputChangedHandler.bind(this, 'until'),
+                value: dates.until.value,
+              }}
+            />
+            <Button
+              style={styles.button}
+              onPress={showDatepicker.bind(this, dates.until, 'until')}>
+              Pick Date
+            </Button>
+          </View>
+        </SafeAreaView>
       </View>
       <View style={styles.formButtons}>
         <Button
