@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import ExpensesOutput from '../components/ExpensesOutput/ExpensesOutput'
 import DatesRangeInfoText from '../components/ExpensesOutput/DatesRangeInfoText'
@@ -6,17 +6,28 @@ import { ExpensesContext } from '../store/expenses-context'
 import { DatesContext } from '../store/dates-context'
 import { getFormattedDate, getNumberOfDays } from '../util/date'
 import { fetshExpenses } from '../util/http'
+import LoadingOverlay from '../UI/LoadingOverlay'
+import ErrorOverlay from '../UI/ErrorOverlay'
 
 export default function RecentExpenses() {
+  const [isFetching, setIsFetching] = useState(true)
+  const [error, setError] = useState()
+
   const expensesCtx = useContext(ExpensesContext)
   const datesCtx = useContext(DatesContext)
 
-  useEffect(() => {
-    async function getExpenses() {
+  async function getExpenses() {
+    setIsFetching(true)
+    try {
       const expenses = await fetshExpenses()
       expensesCtx.setExpenses(expenses)
+    } catch (error) {
+      setError('Could not fetch expenses!')
     }
+    setIsFetching(false)
+  }
 
+  useEffect(() => {
     getExpenses()
   }, [])
 
@@ -36,6 +47,28 @@ export default function RecentExpenses() {
         to={getFormattedDate(until)}
       />
     ) : null
+
+  const errorHandler = () => {
+    setError(null)
+  }
+
+  const repeatHandler = () => {
+    getExpenses()
+  }
+
+  if (error && !isFetching) {
+    return (
+      <ErrorOverlay
+        message={error}
+        onConfirm={errorHandler}
+        onRepeat={repeatHandler}
+      />
+    )
+  }
+
+  if (isFetching) {
+    return <LoadingOverlay />
+  }
 
   return (
     <>
